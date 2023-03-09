@@ -7,6 +7,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <vector>
+#include <string.h>
 
 using namespace std;
 
@@ -79,11 +80,10 @@ class Trash {
             command += date;
             status = system(command.c_str());
             if (status == 0) {
-                cout << "Delete " << file << ";";
+                cout << "Deleted " << file << "; ";
             } else {
                 cerr << "Delete Error";
             }
-            cout << endl;
         }
 
         int trash_clean() {
@@ -110,7 +110,7 @@ int main(int argc, char *argv[], char *env[]) {
 
     int i = 1;
     while (i < argc) {
-        if (argv[i++] == "-c") {
+        if (strcmp(argv[i++], "-c") == 0) {
             char c;
             cout << "Cleaning Trash? [y/n]:";
             cin >> c;
@@ -122,7 +122,7 @@ int main(int argc, char *argv[], char *env[]) {
                 }
 
                 else {
-                    cout << "Clean Error" endl;
+                    cout << "Clean Error" << endl;
                 }
             }
 
@@ -140,6 +140,8 @@ int main(int argc, char *argv[], char *env[]) {
         string file = argv[i++];
         tr->trash_delete(file);
     }
+
+    cout << endl;
 
     delete tr;
     return 0;
