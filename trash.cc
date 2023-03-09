@@ -1,13 +1,13 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdio.h>
+#include <string.h>
 #include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
 #include <vector>
-#include <string.h>
 
 using namespace std;
 
@@ -44,6 +44,11 @@ class Trash {
                 return;
             }
 
+            //去掉尾部‘/’
+            if (file[file.size() - 1] == '/') {
+                file.erase(file.end() - 1);
+            }
+
             time_t timer = time(nullptr);
             struct tm *ss;
             ss = gmtime(&timer);
@@ -70,6 +75,9 @@ class Trash {
             command += " ";
             command += newFile;
             int status = system(command.c_str());
+            if(status != 0){
+                return;
+            }
 
             // 移动文件
             command = "mv ";

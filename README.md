@@ -4,6 +4,9 @@
 ## 安装
 
 - 进入clone目录，执行./install.sh，即完成安装，使用rm命令即可删除
+- 若设置不生效，请重新打开终端
+- 查看回收站默认使用tree命令，若终端未安装该命令，
+- 请使用sudo yum install tree -y 或 sudo apt-get install tree -y 安装tree命令
 
 - 回收站默认路径为 $HOME/.trash
 
@@ -13,7 +16,8 @@
 
 ## 使用
 
-- 安装后默认替换rm命令为trash,原rm命令请使用/usr/bin/rm
+- 安装后默认替换rm命令,原rm命令请使用/usr/bin/rm 或 sudo rm
+- 请牢记如使用sudo rm，执行的仍然是原系统自带的rm命令，被删除文件无法进入回收站
 
 - 查看回收站：rm
 
@@ -23,6 +27,5 @@
 
 - 支持一次删除多个文件：rm file1 file2 file3...
 
-- 若设置不生效，请重新打开终端
 - 回收站目录格式为年_月_日
 - 被删除文件会添加时_分_秒后缀，防止同名文件覆盖
