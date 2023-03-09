@@ -108,35 +108,37 @@ int main(int argc, char *argv[], char *env[]) {
         return 0;
     }
 
-    string opt = argv[1];
-    if (argc > 2 && (opt == "-d")) {
-        int i = 2;
-        while (i < argc) {
-            string file = argv[i++];
-            tr->trash_delete(file);
-        }
-    }
+    int i = 1;
+    while (i < argc) {
+        if (argv[i++] == "-c") {
+            char c;
+            cout << "Cleaning Trash? [y/n]:";
+            cin >> c;
 
-    else if (argc == 2 && opt == "-c") {
-        char c;
-        cout << "Cleaning Frash? [y/n]:";
-        cin >> c;
+            if (c == 'y' || c == 'Y') {
+                int status = tr->trash_clean();
+                if (status == 0) {
+                    cout << "Finsh" << endl;
+                }
 
-        if (c == 'y' || c == 'Y') {
-            int status = tr->trash_clean();
-            if (status == 0) {
-                cout << "Finsh" << endl;
+                else {
+                    cout << "Clean Error" endl;
+                }
             }
 
-        }
+            else {
+                cout << "Cancel Clean." << endl;
+            }
 
-        else {
-            cout << "Cancel Clean." << endl;
+            delete tr;
+            return 0;
         }
     }
 
-    else {
-        cout << "Arg Error." << endl;
+    i = 1;
+    while (i < argc) {
+        string file = argv[i++];
+        tr->trash_delete(file);
     }
 
     delete tr;
