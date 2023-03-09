@@ -81,8 +81,9 @@ class Trash {
             if (status == 0) {
                 cout << "Delete " << file << ";";
             } else {
-                cerr << "Delete error" << endl;
+                cerr << "Delete Error";
             }
+            cout << endl;
         }
 
         int trash_clean() {

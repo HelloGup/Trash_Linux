@@ -1,9 +1,10 @@
 bin=trash
 cc=g++
 src=trash.cc
+flag=-std=c++11
 
 $(bin):$(src)
-	$(cc) -o $@ $^
+	$(cc) -o $@ $^ $(flag)
 
 .PHONY:clean
 clean:
