@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <set>
 #include <stdio.h>
 #include <string.h>
 #include <string>
@@ -18,7 +19,9 @@ class Trash {
 
     public:
         Trash() { Init(); }
+
         void Init() {
+            //获取自定义回收站路径
             char *custom = getenv("TRASH_PATH");
             if (custom) {
                 trash_path = custom;
@@ -44,7 +47,7 @@ class Trash {
                 return;
             }
 
-            //去掉尾部‘/’
+            // 去掉尾部‘/’
             if (file[file.size() - 1] == '/') {
                 file.erase(file.end() - 1);
             }
@@ -53,6 +56,7 @@ class Trash {
             struct tm *ss;
             ss = gmtime(&timer);
 
+            // tm结构体中的变量值
             // 年份从1900开始算起，要+1900;
             // 月份是0-11，要+1;
             // 小时是西方时间，相差8小时，要+8 会超过24 取余一下;
@@ -61,7 +65,7 @@ class Trash {
             string time = to_string((ss->tm_hour + 8) % 24) + "_" +
                 to_string(ss->tm_min) + "_" + to_string(ss->tm_sec);
 
-            // 创建回收站目录 以当前日期创建目录
+            // 创建回收站目录 以当日日期创建目录
             string command = "mkdir -p ";
             command += trash_path;
             command += "/";
@@ -75,7 +79,7 @@ class Trash {
             command += " ";
             command += newFile;
             int status = system(command.c_str());
-            if(status != 0){
+            if (status != 0) {
                 return;
             }
 
@@ -94,58 +98,88 @@ class Trash {
             }
         }
 
+        //清空回收站
         int trash_clean() {
             string command = "/usr/bin/rm -rf ";
             command += trash_path;
             command += "/*";
 
             int status = system(command.c_str());
+
+            //TODO
+
             return status;
+        }
+
+        //调用原rm命令删除文件
+        void trash_rm(string &file) {
+
+            string command = "/usr/bin/rm -rf ";
+            command += file;
+            system(command.c_str());
         }
 
         ~Trash() {}
 };
 
 int main(int argc, char *argv[], char *env[]) {
-    // trash list
+
     Trash *tr = new Trash();
 
+    // trash list
     if (argc == 1) {
         tr->trash_list();
         delete tr;
         return 0;
     }
 
+    set<string> files;
+    //除命令外其他参数全放set里
     int i = 1;
     while (i < argc) {
-        if (strcmp(argv[i++], "-c") == 0) {
-            char c;
-            cout << "Cleaning Trash? [y/n]:";
-            cin >> c;
+        files.insert(argv[i++]);
+    }
 
-            if (c == 'y' || c == 'Y') {
-                int status = tr->trash_clean();
-                if (status == 0) {
-                    cout << "Finsh" << endl;
-                }
+    set<string>::iterator it = files.find("-c");
+    if (it != files.end()) {
+        char c;
+        cout << "Cleaning Trash? [y/n]:";
+        cin >> c;
 
-                else {
-                    cout << "Clean Error" << endl;
-                }
+        if (c == 'y' || c == 'Y') {
+            int status = tr->trash_clean();
+            if (status == 0) {
+                cout << "Finsh" << endl;
             }
 
             else {
-                cout << "Cancel Clean." << endl;
+                cout << "Clean Error" << endl;
             }
-
-            delete tr;
-            return 0;
         }
+
+        else {
+            cout << "Cancel Clean." << endl;
+        }
+
+        delete tr;
+        return 0;
     }
 
-    i = 1;
-    while (i < argc) {
-        string file = argv[i++];
+    // 彻底删除 不使用(背离修改原rm命令的初衷)
+    // it = files.find("-d");
+    // if (it != files.end()) {
+    //     files.erase(it);
+    //     
+    //     for(string file : files){
+    //         tr->trash_rm(file); 
+    //     }
+    //     
+    //     delete tr;
+    //     return 0;
+    // }
+
+    //删除文件 放入回收站
+    for(string file : files){
         tr->trash_delete(file);
     }
 
